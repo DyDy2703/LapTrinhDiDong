@@ -1,0 +1,49 @@
+{
+  "project_info": {
+    "project_number": "870445939317",
+    "firebase_url": "https://course-app-4f75a-default-rtdb.firebaseio.com",
+    "project_id": "course-app-4f75a",
+    "storage_bucket": "course-app-4f75a.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:870445939317:android:d66955a06c1d71d556163c",
+        "android_client_info": {
+          "package_name": "com.example.course_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCtS_XANbQat3v4ExEU6NL0HMQDoeEcLD4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:870445939317:android:7c9f1b4584119cb156163c",
+        "android_client_info": {
+          "package_name": "com.example.demo_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCtS_XANbQat3v4ExEU6NL0HMQDoeEcLD4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
