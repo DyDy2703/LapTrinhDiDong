@@ -1,7 +1,11 @@
+import 'package:course_app/main.dart';
 import 'package:flutter/material.dart';
 import 'package:course_app/screens/auth/register_screen.dart';
 import 'package:course_app/screens/home_screen.dart';
 import 'package:course_app/utils/theme.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -29,15 +33,15 @@ class _LoginScreenState extends State<LoginScreen> {
       setState(() {
         _isLoading = true;
       });
-      
+
       // Giả lập đăng nhập (sẽ thay bằng Firebase Auth sau)
       await Future.delayed(const Duration(seconds: 1));
-      
+
       if (mounted) {
         setState(() {
           _isLoading = false;
         });
-        
+        saveLoginStatus();
         // Chuyển đến màn hình Home
         Navigator.of(context).pushReplacement(
           MaterialPageRoute(builder: (_) => const HomeScreen()),
@@ -67,7 +71,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 style: AppTheme.captionStyle,
               ),
               const SizedBox(height: 40),
-              
+
               // Login Form
               Form(
                 key: _formKey,
@@ -86,14 +90,15 @@ class _LoginScreenState extends State<LoginScreen> {
                         if (value == null || value.isEmpty) {
                           return 'Vui lòng nhập email';
                         }
-                        if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(value)) {
+                        if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$')
+                            .hasMatch(value)) {
                           return 'Email không hợp lệ';
                         }
                         return null;
                       },
                     ),
                     const SizedBox(height: 16),
-                    
+
                     // Password Field
                     TextFormField(
                       controller: _passwordController,
@@ -125,7 +130,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       },
                     ),
                     const SizedBox(height: 8),
-                    
+
                     // Forgot Password
                     Align(
                       alignment: Alignment.centerRight,
@@ -137,10 +142,10 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                     ),
                     const SizedBox(height: 24),
-                    
+
                     // Login Button
                     ElevatedButton(
-                      onPressed: _isLoading ? null : _login,
+                      onPressed: login,
                       child: _isLoading
                           ? const SizedBox(
                               height: 20,
@@ -152,9 +157,9 @@ class _LoginScreenState extends State<LoginScreen> {
                             )
                           : const Text('ĐĂNG NHẬP'),
                     ),
-                    
+
                     const SizedBox(height: 24),
-                    
+
                     // Social Login
                     Row(
                       children: [
@@ -177,9 +182,9 @@ class _LoginScreenState extends State<LoginScreen> {
                         ),
                       ],
                     ),
-                    
+
                     const SizedBox(height: 24),
-                    
+
                     // Google Login Button
                     OutlinedButton.icon(
                       onPressed: () {
@@ -194,9 +199,9 @@ class _LoginScreenState extends State<LoginScreen> {
                         padding: const EdgeInsets.symmetric(vertical: 16),
                       ),
                     ),
-                    
+
                     const SizedBox(height: 16),
-                    
+
                     // Facebook Login Button
                     OutlinedButton.icon(
                       onPressed: () {
@@ -211,9 +216,9 @@ class _LoginScreenState extends State<LoginScreen> {
                         padding: const EdgeInsets.symmetric(vertical: 16),
                       ),
                     ),
-                    
+
                     const SizedBox(height: 24),
-                    
+
                     // Sign Up Link
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -222,7 +227,8 @@ class _LoginScreenState extends State<LoginScreen> {
                         TextButton(
                           onPressed: () {
                             Navigator.of(context).push(
-                              MaterialPageRoute(builder: (_) => const RegisterScreen()),
+                              MaterialPageRoute(
+                                  builder: (_) => const RegisterScreen()),
                             );
                           },
                           child: const Text('Đăng ký'),
@@ -238,4 +244,42 @@ class _LoginScreenState extends State<LoginScreen> {
       ),
     );
   }
+
+  Future<void> login() async {
+    try {
+      final response = await http.post(
+        Uri.parse('http://10.0.2.2:8080/login'),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({
+          'username': _emailController.text,
+          'password': _passwordController.text,
+        }),
+      );
+
+      print("Status code: ${response.statusCode}");
+      print("Response body: ${response.body}");
+
+      if (response.statusCode == 200) {
+        final result = jsonDecode(response.body);
+        if (result == true) {
+          print("Đăng nhập thành công");
+        } else {
+          print("Sai thông tin đăng nhập");
+        }
+        saveLoginStatus();
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(builder: (_) => const HomeScreen()),
+        );
+      } else {
+        print("Lỗi server: ${response.statusCode}");
+      }
+    } catch (e) {
+      print("$e");
+    }
+  }
+}
+
+Future<void> saveLoginStatus() async {
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  await prefs.setBool('isLoggedIn', true);
 }

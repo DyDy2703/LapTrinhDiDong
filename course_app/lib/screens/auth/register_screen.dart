@@ -1,6 +1,9 @@
+import 'package:course_app/main.dart';
 import 'package:flutter/material.dart';
 import 'package:course_app/utils/theme.dart';
 import 'package:course_app/screens/home_screen.dart';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -33,15 +36,31 @@ class _RegisterScreenState extends State<RegisterScreen> {
       setState(() {
         _isLoading = true;
       });
-      
-      // Giả lập đăng ký (sẽ thay bằng Firebase Auth sau)
-      await Future.delayed(const Duration(seconds: 1));
-      
+
+      final url = Uri.parse("http://10.0.2.2:8080/register");
+
+      final response = await http.post(
+        url,
+        headers: {"Content-Type": "application/json"},
+        body: jsonEncode({
+          "username": _nameController.text,
+          "email": _emailController.text,
+          "password": _passwordController.text,
+        }),
+      );
+
+      if (response.statusCode == 200) {
+        print("Đăng ký thành công");
+      } else {
+        print("Lỗi đăng ký: ${response.body}");
+      }
+
       if (mounted) {
         setState(() {
           _isLoading = false;
         });
-        
+
+        saveLoginStatus();
         // Chuyển đến màn hình Home
         Navigator.of(context).pushReplacement(
           MaterialPageRoute(builder: (_) => const HomeScreen()),
@@ -75,7 +94,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 style: AppTheme.captionStyle,
               ),
               const SizedBox(height: 32),
-              
+
               // Registration Form
               Form(
                 key: _formKey,
@@ -97,7 +116,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       },
                     ),
                     const SizedBox(height: 16),
-                    
+
                     // Email Field
                     TextFormField(
                       controller: _emailController,
@@ -110,14 +129,15 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         if (value == null || value.isEmpty) {
                           return 'Vui lòng nhập email';
                         }
-                        if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(value)) {
+                        if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$')
+                            .hasMatch(value)) {
                           return 'Email không hợp lệ';
                         }
                         return null;
                       },
                     ),
                     const SizedBox(height: 16),
-                    
+
                     // Password Field
                     TextFormField(
                       controller: _passwordController,
@@ -149,7 +169,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       },
                     ),
                     const SizedBox(height: 16),
-                    
+
                     // Confirm Password Field
                     TextFormField(
                       controller: _confirmPasswordController,
@@ -165,7 +185,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           ),
                           onPressed: () {
                             setState(() {
-                              _isConfirmPasswordVisible = !_isConfirmPasswordVisible;
+                              _isConfirmPasswordVisible =
+                                  !_isConfirmPasswordVisible;
                             });
                           },
                         ),
@@ -181,7 +202,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       },
                     ),
                     const SizedBox(height: 32),
-                    
+
                     // Register Button
                     ElevatedButton(
                       onPressed: _isLoading ? null : _register,
@@ -196,9 +217,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             )
                           : const Text('ĐĂNG KÝ'),
                     ),
-                    
+
                     const SizedBox(height: 24),
-                    
+
                     // Terms and Conditions
                     Text(
                       'Bằng cách đăng ký, bạn đồng ý với Điều khoản dịch vụ và Chính sách bảo mật của chúng tôi.',

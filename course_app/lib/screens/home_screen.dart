@@ -1,8 +1,10 @@
+import 'package:course_app/screens/auth/login_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:course_app/utils/theme.dart';
 import 'package:course_app/screens/course_detail_screen.dart';
 import 'package:course_app/widgets/course_card.dart';
 import 'package:course_app/widgets/category_card.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -177,13 +179,36 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                     ],
                   ),
-                  CircleAvatar(
-                    radius: 24,
-                    backgroundColor: AppTheme.accentColor,
-                    child: const Icon(
-                      Icons.person,
-                      color: Colors.white,
+                  PopupMenuButton<String>(
+                    icon: CircleAvatar(
+                      radius: 24,
+                      backgroundColor: AppTheme.accentColor,
+                      child: const Icon(
+                        Icons.person,
+                        color: Colors.white,
+                      ),
                     ),
+                    onSelected: (value) {
+                      if (value == 'logout') {
+                        logout; // Gọi hàm đăng xuất
+                        Navigator.of(context).pushReplacement(
+                          MaterialPageRoute(
+                              builder: (context) => LoginScreen()),
+                        );
+                      }
+                    },
+                    itemBuilder: (context) => [
+                      PopupMenuItem<String>(
+                        value: 'logout',
+                        child: Row(
+                          children: [
+                            Icon(Icons.logout, color: Colors.black),
+                            SizedBox(width: 8),
+                            Text("Đăng xuất"),
+                          ],
+                        ),
+                      ),
+                    ],
                   ),
                 ],
               ),
@@ -356,4 +381,9 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
     );
   }
+}
+
+Future<void> logout(BuildContext context) async {
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  await prefs.remove('isLoggedIn');
 }

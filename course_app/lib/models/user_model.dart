@@ -2,6 +2,7 @@ class UserModel {
   final String id;
   final String name;
   final String email;
+  final String password;
   final String? profileImageUrl;
   final List<String> enrolledCourses;
   final DateTime createdAt;
@@ -10,6 +11,7 @@ class UserModel {
     required this.id,
     required this.name,
     required this.email,
+    required this.password,
     this.profileImageUrl,
     this.enrolledCourses = const [],
     DateTime? createdAt,
@@ -21,6 +23,7 @@ class UserModel {
       'id': id,
       'name': name,
       'email': email,
+      'password': password,
       'profileImageUrl': profileImageUrl,
       'enrolledCourses': enrolledCourses,
       'createdAt': createdAt.toIso8601String(),
@@ -33,9 +36,11 @@ class UserModel {
       id: map['id'] ?? '',
       name: map['name'] ?? '',
       email: map['email'] ?? '',
+      password: map['password'] ?? '',
       profileImageUrl: map['profileImageUrl'],
       enrolledCourses: List<String>.from(map['enrolledCourses'] ?? []),
-      createdAt: DateTime.parse(map['createdAt'] ?? DateTime.now().toIso8601String()),
+      createdAt:
+          DateTime.parse(map['createdAt'] ?? DateTime.now().toIso8601String()),
     );
   }
 
@@ -44,6 +49,7 @@ class UserModel {
     String? id,
     String? name,
     String? email,
+    String? password,
     String? profileImageUrl,
     List<String>? enrolledCourses,
     DateTime? createdAt,
@@ -52,6 +58,7 @@ class UserModel {
       id: id ?? this.id,
       name: name ?? this.name,
       email: email ?? this.email,
+      password: password ?? this.password,
       profileImageUrl: profileImageUrl ?? this.profileImageUrl,
       enrolledCourses: enrolledCourses ?? this.enrolledCourses,
       createdAt: createdAt ?? this.createdAt,

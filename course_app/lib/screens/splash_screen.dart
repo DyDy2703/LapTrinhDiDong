@@ -1,6 +1,8 @@
+import 'package:course_app/screens/home_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:course_app/screens/auth/login_screen.dart';
 import 'package:course_app/utils/theme.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -19,9 +21,17 @@ class _SplashScreenState extends State<SplashScreen> {
   _navigateToNextScreen() async {
     await Future.delayed(const Duration(seconds: 2));
     if (mounted) {
-      Navigator.of(context).pushReplacement(
-        MaterialPageRoute(builder: (_) => const LoginScreen()),
-      );
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      bool isLoggedIn = prefs.getBool('isLoggedIn') ?? false;
+      if (isLoggedIn) {
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(builder: (context) => HomeScreen()),
+        );
+      } else {
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(builder: (_) => const LoginScreen()),
+        );
+      }
     }
   }
 

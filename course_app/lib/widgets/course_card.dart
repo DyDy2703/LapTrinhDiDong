@@ -91,6 +91,7 @@ class CourseCard extends StatelessWidget {
                   const SizedBox(height: 4),
 
                   // Rating
+
                   Row(
                     children: [
                       const Icon(
@@ -116,9 +117,11 @@ class CourseCard extends StatelessWidget {
                       ),
                     ],
                   ),
-                  const SizedBox(height: 8),
+
+                  const SizedBox(height: 4),
 
                   // Price
+
                   Row(
                     children: [
                       Text(
